@@ -1,7 +1,5 @@
 #include "gbn.h"
 
-/* SERVER */
-
 int main(int argc, char *argv[]){
 	int sockfd;          /* socket file descriptor of the client            */
 	int numRead;

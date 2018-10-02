@@ -1,7 +1,5 @@
 #include "gbn.h"
 
-/* CLIENT */
-
 int main(int argc, char *argv[])
 {
 	int sockfd;
