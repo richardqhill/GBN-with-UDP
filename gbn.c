@@ -8,16 +8,6 @@ int gbn_socket(int domain, int type, int protocol){
     return socket(domain, type, protocol);
 }
 void gbn_init(){
-    /* Initialize our Server struct */
-    memset(&server_state,0,sizeof(server_state));
-    server_state.state = CLOSED;
-    server_state.seqnum = 0;
-
-    /* Initialize our Client struct */
-    memset(&client_state,0,sizeof(client_state));
-    client_state.state = CLOSED;
-    client_state.seqnum = 0;
-
     /* Set up struct for interrupt timer */
     struct sigaction sact;
     sact.sa_handler = signal_handler;
@@ -36,21 +26,25 @@ int gbn_listen(int sockfd, int backlog){
     return(0);
 }
 
-/* Called by Server/Sender to connect to Client/Receiver */
+/* Called by Client/Sender to connect to Server/Receiver */
 // Does this work if runs receiver first?
 int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
     printf("gbn_connect:\n");
 
-    /* Use our Client struct to keep track of Server sockaddr/length */
+    /* Initialize our Client struct and use to keep track of Server sockaddr/length */
+    memset(&client_state,0,sizeof(client_state));
+    client_state.state = CLOSED;
     memcpy(&client_state.server, server, socklen);
     client_state.server_ptr = &client_state.server;
     client_state.dest_socklen = socklen;
+    client_state.packet_num = 0;
+    client_state.window_size = WINDOW_SLOWMODE;
 
     state_t temp = client_state; // troubleshooting
 
     // Create a SYN packet
     gbnhdr syn_packet;
-    size_t packet_size = gbnhdr_packet_builder(&syn_packet, SYN, client_state.seqnum, NULL, 0);
+    size_t packet_size = gbnhdr_packet_builder(&syn_packet, SYN, 0, 0, NULL, 0);
 
     // Create a place to store a return packet from Server
     gbnhdr packet_from_server;
@@ -59,7 +53,7 @@ int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
     // we can update this to try like ~5-10 times
     while(TRUE){
         if((sendto(sockfd, &syn_packet, packet_size, 0, server, socklen)) == -1){
-            printf("We failed to send SYN\n");
+            printf("Client failed to send SYN\n");
         }
         else {
             printf("Client sent SYN, waiting to receive SYNACK from Server \n");
@@ -68,7 +62,7 @@ int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
             if((recvfrom(sockfd, &packet_from_server, sizeof(gbnhdr), 0, server, &socklen)) == -1)
                 printf("Client did not receive SYNACK from Server \n");
             else if(packet_from_server.type == SYNACK) {
-                printf("Client received SYNACK from Server! \n");
+                printf("Client received SYNACK from Server, considers connection established! \n");
                 client_state.state = ESTABLISHED;
                 return 0;
             }
@@ -78,86 +72,77 @@ int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
     return(-1);
 }
 
-/* Called by Client/Receiver to take SYN from Receiver and return SYNACK */
-int gbn_accept(int sockfd, struct sockaddr *client, socklen_t *socklen){
-    printf("gbn_accept:\n");
-
-    /* Allow Server to keep track of Client sockaddr/length with our state struct */
-    memcpy(&server_state.sockaddr, client, *socklen);
-    server_state.dest_sockaddr_ptr = &server_state.sockaddr;
-    server_state.dest_socklen = *socklen;
-
-    state_t temp = server_state;  // troubleshooting
-
-
-    // Create a place to store packet from Client. Populated by recvfrom
-    gbnhdr packet_from_client;
-    gbnhdr_clear_packet(&packet_from_client);
-
-    // Update to have like 10 attempts, 1 attempt every second...
-    while(TRUE){
-        if((recvfrom(sockfd, &packet_from_client, sizeof(gbnhdr), 0, client, socklen)) == -1)
-            printf("Server failed to receive anything from Client");
-
-        else if(packet_from_client.type == SYN){
-            printf("Server successfully received SYN from client, sending SYNACK \n");
-            server_state.state = SYN_RCVD;
-
-            // Server to create and send SYNACK
-            gbnhdr synack_packet;
-            size_t packet_size = gbnhdr_packet_builder(&synack_packet, SYNACK, server_state.seqnum, NULL, 0);
-
-            if((sendto(sockfd, &synack_packet, packet_size, 0, client, *socklen)) == -1){
-                printf("Server failed to send SYNACK \n");
-            }
-            else{
-                printf("Server sent SYNACK and considers connection established! \n");
-                client_state.state = ESTABLISHED;
-                return 0;
-            }
-        }
-    }
-	return(-1);
-}
-
-/* Called by Server to start sending data to Client */
+/* Called by Client/Sender to start sending data to Server */
 ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
+    printf("gbn_send:\n");
 
-    // Retrieve Client sockaddr info from state struct
-    struct sockaddr* client = server_state.dest_sockaddr_ptr;
-    socklen_t socklen = server_state.dest_socklen;
+    // Retrieve Server sockaddr info from Client state struct
+    struct sockaddr* server = client_state.server_ptr;
+    socklen_t socklen = client_state.dest_socklen;
 
-    state_t temp = server_state;
-    state_t temp2 = client_state;
 
-    /* Hint: Check the data length field 'len'.
-     *       If it is > DATALEN, you will have to split the data
-     *       up into multiple packets - you don't have to worry
-     *       about getting more than N * DATALEN.
-     */
-
-    // !!! ignore buf for now and send Hello world in the packet data
-    char testString[100] = "Hello world";
-    size_t testStringLen = strlen(testString);
-
-    ssize_t len_sent = sendto(sockfd, testString, testStringLen, 0, client, socklen);
-    if (len_sent == -1)
-        printf("Server failed to send Hello World\n");
+    size_t length_of_last_packet = len % 1024;
+    size_t expected_number_of_packets;
+    size_t num_acked_packets = 0;
+    if(length_of_last_packet == 0)
+        expected_number_of_packets = len / 1024;
     else
-        printf("Server sent Hello World\n");
+        expected_number_of_packets = len / 1024 + 1;
+    size_t current_offset = 0;
+    size_t window_beginning_offset = 0;
 
+
+    while(num_acked_packets < expected_number_of_packets){
+
+        gbnhdr data_packet;
+
+        /* If we are at the last packet */
+        if(client_state.packet_num == expected_number_of_packets && length_of_last_packet!= 0){
+            size_t packet_size = gbnhdr_packet_builder(&data_packet, DATA, length_of_last_packet, client_state.packet_num, buf + current_offset, DATALEN);
+
+            if ((sendto(sockfd, &data_packet, sizeof(data_packet), 0, server, socklen)) == -1)
+                printf("Client failed to send packet# %d\n",client_state.packet_num);
+            else
+                printf("Client sent send packet# %d\n",client_state.packet_num);
+
+            client_state.packet_num++;
+
+            // wait for ack?
+            // implement later
+        }
+
+
+        // send packets that aren't the last packet
+    }
+
+
+    /*
     // create a data packet
     gbnhdr data_packet;
+    char testString[100] = "Hello world";
+    size_t testStringLen = strlen(testString);
     size_t packet_size = gbnhdr_packet_builder(&data_packet, DATA, server_state.seqnum, testString, testStringLen);
     //size_t packet_size = gbnhdr_packet_builder(&data_packet, SYN, state.seqnum, buf, 0);
 
+
     while(TRUE) {
+        if ((sendto(sockfd, &data_packet, sizeof(data_packet), 0, server, socklen)) == -1)
+            printf("Client failed to send Hello World\n");
+        else
+            printf("Client sent Hello World\n");
+
+        //counter++;
         continue;
-        ssize_t len_sent = sendto(sockfd, &data_packet, packet_size, 0, client, socklen);
-        if (len_sent == -1) {
-            printf("We failed to send data packet\n");
-        }
+        //ssize_t len_sent = sendto(sockfd, &data_packet, packet_size, 0, server, socklen);
+        //if (len_sent == -1) {
+        //    printf("We failed to send data packet\n");
+        //}
     }
+
+
+
+
+    //int counter = 0;
 
     // create a place to store DATAACK packet from receiver
     gbnhdr packet_from_receiver;
@@ -167,46 +152,114 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
     //if(len > DATALEN){
     // implement later!!
     //}
+    */
 
     return(-1);
 }
 
+/* Called by Server/Receiver to take SYN from Client and return SYNACK */
+int gbn_accept(int sockfd, struct sockaddr *client, socklen_t *socklen){
+    printf("gbn_accept:\n");
 
-/* Called by Client to start getting data from Server */
-ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
+    /* Initialize our Server struct  */
+    memset(&server_state,0,sizeof(server_state));
+    server_state.state = CLOSED;
+    server_state.packet_num = 0;
 
-    // Retrieve Server sockaddr info from state struct
-    struct sockaddr* server = client_state.dest_sockaddr_ptr;
-    socklen_t socklen = client_state.dest_socklen;
+    state_t temp = server_state;  // troubleshooting
 
-    // Create a place to store data packet from Server
-    gbnhdr packet_from_server;
-    gbnhdr_clear_packet(&packet_from_server);
+    // Create a place to store packet from Client (Populated by recvfrom)
+    gbnhdr packet_from_client;
+    gbnhdr_clear_packet(&packet_from_client);
 
-    char echoBuffer[500];
-    ssize_t len_recv = recvfrom(sockfd, echoBuffer, 11, 0, server, socklen);
-    if(len_recv == -1)
-        printf("Client failed to receive anything from Server");
-    else
-        printf("Client received %s from Server \n",echoBuffer);
-
+    // Update to have like 10 attempts, 1 attempt every second...
     while(TRUE){
-        continue;
-        /*ssize_t len_recv = recvfrom(sockfd, &packet_from_server, sizeof(gbnhdr), 0, server, socklen);
+        if((recvfrom(sockfd, &packet_from_client, sizeof(gbnhdr), 0, client, socklen)) == -1)
+            printf("Server failed to receive anything from Client");
 
-        if(len_recv == -1)
-            printf("Sender did not receive SYNACK!\n");
-        else{
-            //validate checksum
+        else if(packet_from_client.type == SYN){
+            printf("Server successfully received SYN\n");
 
-            printf("Client received %s from Server \n", packet_from_server.data);
-        }*/
+            /* Use Server struct to keep track of Client sockaddr/length */
+            memcpy(&server_state.client, client, *socklen);
+            server_state.client_ptr = &server_state.client;
+            server_state.dest_socklen = *socklen;
+
+            // Server to create and send SYNACK
+            gbnhdr synack_packet;
+            size_t packet_size = gbnhdr_packet_builder(&synack_packet, SYNACK, 0, 0, NULL, 0);
+
+            if((sendto(sockfd, &synack_packet, packet_size, 0, client, *socklen)) == -1){
+                printf("Server failed to send SYNACK \n");
+            }
+            else{
+                printf("Server sent SYNACK and considers connection established! \n");
+                client_state.state = ESTABLISHED;
+                return sockfd;
+            }
+        }
     }
     return(-1);
 }
 
 
 
+/* Called by Server/Receiver to start getting data from Client */
+ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
+    printf("gbn_recv:\n");
+
+    size_t bytes_written_to_buf = 0;
+
+    // Create a place to store data packet from Client
+    gbnhdr packet_from_client;
+
+    while(TRUE){
+
+        printf("----------------------------------------\n");
+        printf("gbn_recv: receiving DATA \n");
+
+        gbnhdr_clear_packet(&packet_from_client);
+
+        if((recvfrom(sockfd, &packet_from_client, sizeof(packet_from_client), 0, NULL, NULL)) <= 0) {
+            return bytes_written_to_buf;
+        }
+        else{
+
+            // Drop any corrupted packets
+            if(gbnhdr_validate_checksum(&packet_from_client))
+                continue;
+
+            // Drop any packet that is not the next expected packet num
+            if(packet_from_client.packet_num != server_state.packet_num){
+
+            }
+
+            printf("Server failed to recieve anything from Client \n");
+        }
+
+        continue;
+        /*ssize_t len_recv = recvfrom(sockfd, &packet_from_client, sizeof(gbnhdr), 0, server, socklen);
+
+        if(len_recv == -1)
+            printf("Sender did not receive SYNACK!\n");
+        else{
+            //validate checksum
+
+            printf("Client received %s from Server \n", packet_from_client.data);
+        }*/
+
+
+
+
+    }
+
+
+
+
+
+
+    return(-1);
+}
 
 int gbn_close(int sockfd){
 
@@ -217,30 +270,6 @@ int gbn_close(int sockfd){
     // stop timers???
 
     return(-1);
-}
-
-/* Helper fx to build packets */
-size_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint8_t seqnum, const void *buf, size_t len){
-
-    if( len > DATALEN)
-        return -1;
-
-    gbnhdr_clear_packet(packet);
-
-    packet->type = type;
-    packet->seqnum = seqnum;
-    packet->checksum = 0;
-
-    if (buf != NULL && len >0){
-        memcpy(packet->data, buf, len);
-    }
-
-    packet->checksum = checksum((uint16_t *)packet, sizeof(*packet) / sizeof(uint16_t));
-
-    //printf("gbnhdr_build: created packet with checksum %d\n", packet->checksum);
-
-    /* return the length of the packet ??? */
-    return sizeof(packet->type) + sizeof(packet->seqnum) + sizeof(packet->checksum) + (sizeof(uint8_t) * len);
 }
 
 /* Helper fx for Server to keep track of Client acks */
@@ -259,10 +288,34 @@ ssize_t gbnhdr_recv_ack(int sockfd, gbnhdr *packet, int flags) {
     }
 }
 
-/* Check if packet is corrupted by comparing given checksum and calculated checksum */
+/* Helper fx to build packets */
+size_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t data_length_in_bits, uint16_t packet_num,
+        const void *buf, size_t len){
+
+    if( len > DATALEN)
+        return -1;
+
+    gbnhdr_clear_packet(packet);
+
+    packet->type = type;
+    packet->checksum = 0;
+    packet->data_length_in_bits = data_length_in_bits;
+    packet->packet_num = packet_num;
+
+    if (buf != NULL && len >0){
+        memcpy(packet->data, buf, len);
+    }
+
+    packet->checksum = checksum((uint16_t *)packet, sizeof(*packet) / sizeof(uint16_t));
+
+    return sizeof(packet->type) + sizeof(packet->seqnum) + sizeof(packet->checksum) + (sizeof(uint8_t) * len);
+}
+
+/* Helper fx to check if packet is corrupted by comparing given checksum and calculated checksum */
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet){
 
     uint16_t received_checksum = packet->checksum;
+    packet->checksum = 0;
     uint16_t calculated_checksum = checksum((uint16_t *)packet, sizeof(*packet) / sizeof(uint16_t));
 
     if (received_checksum == calculated_checksum){
@@ -277,15 +330,24 @@ uint8_t gbnhdr_validate_checksum(gbnhdr *packet){
     }
 }
 
-/* Use memset to clear packet and make sure we do not access garbage */
+/* Helper fx to clear packet memory and make sure we do not access garbage */
 void gbnhdr_clear_packet(gbnhdr *packet) {
     memset(packet, 0, sizeof(*packet));
 }
-
-
-
 void signal_handler(){
     // Do nothing
+}
+void set_window_slow(){
+    printf("set_window_slow: window=%d\n", WINDOW_SLOWMODE);
+    client_state.window_size = WINDOW_SLOWMODE;
+}
+void set_window_med(){
+    printf("set_window_med: window=%d\n", WINDOW_MODMODE);
+    client_state.window_size = WINDOW_MODMODE;
+}
+void set_window_fast(){
+    printf("set_window_fast: window=%d\n", WINDOW_FASTMODE);
+    client_state.window_size = WINDOW_FASTMODE;
 }
 
 /* Provided by instructor to introduce corruption and packet dropping */

@@ -42,6 +42,11 @@ extern int errno;
 #define ACKSTATUS_CORRUPT -2
 #define ACKSTATUS_BADSEQ -3
 
+/*----- Window Speed Modes ----- */
+#define WINDOW_SLOWMODE 1
+#define WINDOW_MODMODE 2
+#define WINDOW_FASTMODE 4
+
 /*----- Booleans -----*/
 #define TRUE     1
 #define FALSE    0
@@ -50,6 +55,8 @@ extern int errno;
 typedef struct {
 	uint8_t type;            /* packet type (e.g. SYN, DATA, ACK, FIN)       */
 	uint16_t seqnum;         /* sequence number of the packet. Updated to 16 */
+	uint16_t data_length_in_bits;
+	uint16_t packet_num;
     uint16_t checksum;        /* header and payload checksum                  */
     uint8_t data[DATALEN];    /* pointer to the payload                       */
 } __attribute__((packed)) gbnhdr;
@@ -58,19 +65,14 @@ typedef struct state_t{
 
     uint8_t state;
 
-
-    struct sockaddr_storage sockaddr;
-    struct sockaddr *dest_sockaddr_ptr;
-
     struct sockaddr_storage client;
     struct sockaddr *client_ptr;
-
     struct sockaddr_storage server;
     struct sockaddr *server_ptr;
-
     socklen_t dest_socklen;
 
-    uint8_t seqnum;
+    uint16_t packet_num;
+    uint8_t window_size;
 
 } state_t;
 
@@ -104,10 +106,21 @@ uint16_t checksum(uint16_t *buf, int nwords);
 
 void gbn_init();
 void gbnhdr_clear_packet(gbnhdr *packet);
-size_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint8_t seqnum, const void *buf, size_t len);
+size_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t data_length_in_bits, uint16_t packet_num,
+                             const void *buf, size_t len);
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet);
 ssize_t gbn_send_packet(int sockfd, const void *buf, size_t len, int flags,
         const struct sockaddr *server, socklen_t socklen);
 
 void signal_handler();
+
+void set_window_slow();
+void set_window_med();
+void set_window_fast();
+
+
+
+Collapse 
+
+
 #endif
