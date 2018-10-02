@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/Users/richardhill/CLionProjects/NDSHW1/gbn.c
-gbn.h
-/Users/richardhill/CLionProjects/NDSHW1/gbn.h
-
 /Users/richardhill/CLionProjects/NDSHW1/gbn.h
 sys/types.h
 -
@@ -39,4 +35,8 @@ time.h
 -
 arpa/inet.h
 -
+
+/Users/richardhill/CLionProjects/NDSHW1/receiver.c
+gbn.h
+/Users/richardhill/CLionProjects/NDSHW1/gbn.h
 

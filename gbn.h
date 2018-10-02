@@ -48,8 +48,12 @@ extern int errno;
 #define WINDOW_FASTMODE 3
 
 /*----- Booleans -----*/
-#define TRUE     1
-#define FALSE    0
+#define TRUE  1
+#define FALSE 0
+
+/*----- Roles -----*/
+#define CLIENT  2
+#define SERVER  3
 
 /*----- Go-Back-n packet format -----*/
 typedef struct {
@@ -65,13 +69,14 @@ typedef struct state_t{
 
     uint8_t state;
 
+    uint8_t role;
     struct sockaddr_storage client;
     struct sockaddr *client_ptr;
     struct sockaddr_storage server;
     struct sockaddr *server_ptr;
     socklen_t dest_socklen;
 
-    uint16_t packet_num;
+    uint16_t packet_num;        /* First packet is packet #1                 */
     uint8_t window_size;
 
 } state_t;
@@ -80,6 +85,7 @@ typedef struct state_t{
 
 enum {
 	CLOSED=0,
+	LISTENING,
 	SYN_SENT,
 	SYN_RCVD,
 	ESTABLISHED,
@@ -106,7 +112,7 @@ uint16_t checksum(uint16_t *buf, int nwords);
 
 void gbn_init();
 void gbnhdr_clear_packet(gbnhdr *packet);
-size_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t data_len, const void *buf,
+uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t data_len, const void *buf,
                              size_t buffer_len);
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet);
 ssize_t gbn_send_packet(int sockfd, const void *buf, size_t len, int flags,
