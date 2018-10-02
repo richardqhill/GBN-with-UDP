@@ -76,8 +76,9 @@ typedef struct state_t{
     struct sockaddr *server_ptr;
     socklen_t dest_socklen;
 
-    uint16_t packet_num;        /* First packet is packet #1                 */
+    uint16_t packet_num;        /* First packet is packet #1 (not #0)          */
     uint8_t window_size;
+    gbnhdr packet_buf[N+1];     /* Packet #1 is stored at index 1              */
 
 } state_t;
 
@@ -112,8 +113,7 @@ uint16_t checksum(uint16_t *buf, int nwords);
 
 void gbn_init();
 void gbnhdr_clear_packet(gbnhdr *packet);
-uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t data_len, const void *buf,
-                             size_t buffer_len);
+uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t payload_length, const void *buf);
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet);
 ssize_t gbn_send_packet(int sockfd, const void *buf, size_t len, int flags,
         const struct sockaddr *server, socklen_t socklen);

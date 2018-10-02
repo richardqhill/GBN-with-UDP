@@ -39,7 +39,7 @@ int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
 
     // Create a SYN packet
     gbnhdr syn_packet;
-    gbnhdr_packet_builder(&syn_packet, SYN, 0, 0, NULL, 0);
+    gbnhdr_packet_builder(&syn_packet, SYN, 0, 0, NULL);
 
     // Create a place to store a return packet from Server
     gbnhdr packet_from_server;
@@ -87,8 +87,30 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
         expected_number_of_packets = len / DATALEN;
     else
         expected_number_of_packets = len / DATALEN + 1;
-    size_t current_offset = 0;
+
+    size_t current_offset = 0; // DELETE not using
+
     size_t window_beginning_offset = 0;
+
+    // create every packet needed for this buffer and store into state struct
+    int builder_offset = 0;
+    for(int i=1; i<=expected_number_of_packets; i++){
+
+        gbnhdr data_packet;
+
+        // Handle case where last packet does not have full payload
+        if(i == expected_number_of_packets && length_of_last_packet!= 0){
+            gbnhdr_packet_builder(&data_packet, DATA, i, length_of_last_packet,
+                                  buf + builder_offset);
+        }
+        else{
+            gbnhdr_packet_builder(&data_packet, DATA, i, DATALEN,
+                                  buf + builder_offset);
+            builder_offset += DATALEN;
+        }
+        client_state.packet_buf[i] = data_packet;
+    }
+
 
 
     while(num_acked_packets < expected_number_of_packets){
@@ -99,7 +121,7 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
         /* If we are at the last packet */
         if(current_packet_num == expected_number_of_packets && length_of_last_packet!= 0){
             gbnhdr_packet_builder(&data_packet, DATA, current_packet_num, length_of_last_packet,
-                    buf + current_offset, DATALEN);
+                                  buf + current_offset);
 
             if ((sendto(sockfd, &data_packet, sizeof(data_packet), flags, server, socklen)) == -1) {
                 printf("Client failed to send packet# %d\n", current_packet_num);
@@ -184,7 +206,7 @@ int gbn_accept(int sockfd, struct sockaddr *client, socklen_t *socklen){
 
             // Server to create and send SYNACK
             gbnhdr synack_packet;
-            gbnhdr_packet_builder(&synack_packet, SYNACK, 0, 0, NULL, 0);
+            gbnhdr_packet_builder(&synack_packet, SYNACK, 0, 0, NULL);
 
             if((sendto(sockfd, &synack_packet, sizeof(synack_packet), 0, client, *socklen)) == -1){
                 printf("Server failed to send SYNACK \n");
@@ -229,6 +251,12 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
         printf("-------------------------------------------\n");
         printf("gbn_recv: Server waiting to receive packets \n");
 
+
+
+        // see if it is stored in the array. Will not work if stored data is supposed to be 0, but good enough
+
+
+
         gbnhdr_clear_packet(&packet_from_client);
 
         if((recvfrom(sockfd, &packet_from_client, sizeof(packet_from_client), flags, NULL, NULL)) == -1) {
@@ -248,7 +276,7 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
             // !!!!!!!
             next_expected_packet_num = (uint16_t) (server_state.packet_num + 1);
             if(packet_from_client.packet_num != next_expected_packet_num){
-                gbnhdr_packet_builder(&ack_packet, DATAACK, next_expected_packet_num, 0, NULL, 0);
+                gbnhdr_packet_builder(&ack_packet, DATAACK, next_expected_packet_num, 0, NULL);
                 if((sendto(sockfd, &ack_packet, sizeof(ack_packet), flags, client, socklen)) == -1) {
                     printf("Server failed to send ACK for OOO packet \n");
                     return -1;
@@ -275,7 +303,7 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
         next_expected_packet_num = (uint16_t) (server_state.packet_num + 1);
 
         printf("gbn_recv: sending DATAACK for next expected packet num \n");
-        gbnhdr_packet_builder(&ack_packet, DATAACK, next_expected_packet_num, 0, NULL, 0);
+        gbnhdr_packet_builder(&ack_packet, DATAACK, next_expected_packet_num, 0, NULL);
         if ((sendto(sockfd, &ack_packet, sizeof(ack_packet), 0, client, socklen)) == -1) {
             printf("Server failed to send ACK for successful packet \n");
             return -1;
@@ -292,7 +320,7 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
         server_state.state = FIN_RCVD;
 
         printf("gbn_recv: sending FINACK \n");
-        gbnhdr_packet_builder(&ack_packet, FINACK, 0, 0, NULL, 0);
+        gbnhdr_packet_builder(&ack_packet, FINACK, 0, 0, NULL);
         if ((sendto(sockfd, &ack_packet, sizeof(ack_packet), 0, client, socklen)) == -1) {
             printf("Server failed to send FINACK packet \n");
             return -1;
@@ -337,21 +365,20 @@ int gbn_close(int sockfd){
 
 
 /* Helper fx to build packets */
-uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t data_len, const void *buf,
-                             size_t buffer_len) {
+uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t payload_length, const void *buf) {
 
-    if( buffer_len > DATALEN)
+    if( payload_length > DATALEN)
         return -1;
 
     gbnhdr_clear_packet(packet);
 
     packet->type = type;
-    packet->data_length_in_bytes = data_len;
+    packet->data_length_in_bytes = payload_length;
     packet->packet_num = packet_num;
     packet->checksum = 0; // Need to set this to 0 before calculating checksum so that receiver side can replicate
 
-    if (buf != NULL && buffer_len >0){
-        memcpy(packet->data, buf, buffer_len);
+    if (buf != NULL && payload_length >0){
+        memcpy(packet->data, buf, payload_length);
     }
 
     packet->checksum = checksum((uint16_t *)packet, sizeof(*packet) / sizeof(uint16_t));

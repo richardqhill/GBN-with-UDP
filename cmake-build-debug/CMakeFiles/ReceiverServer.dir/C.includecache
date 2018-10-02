@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/Users/richardhill/CLionProjects/NDSHW1/gbn.c
+gbn.h
+/Users/richardhill/CLionProjects/NDSHW1/gbn.h
+
 /Users/richardhill/CLionProjects/NDSHW1/gbn.h
 sys/types.h
 -
