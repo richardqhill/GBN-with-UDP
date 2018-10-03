@@ -13,17 +13,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="Finished implementing gbn_reck_dataack, about to test">
+    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="still investigating checksum issue in last packet">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/b.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/b.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SenderClient" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SenderClient" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.c" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gbn.h" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.o" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output" beforeDir="false" afterPath="$PROJECT_DIR$/output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/receiver" beforeDir="false" afterPath="$PROJECT_DIR$/receiver" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sender" beforeDir="false" afterPath="$PROJECT_DIR$/sender" afterDir="false" />
     </list>
@@ -67,16 +66,16 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="c" value="20287" />
+          <entry key="c" value="20531" />
           <entry key="h" value="1289" />
-          <entry key="txt" value="653" />
+          <entry key="txt" value="775" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CMakeLists.txt" value="102" />
-          <entry key="ObjectiveC" value="21576" />
-          <entry key="PLAIN_TEXT" value="551" />
+          <entry key="ObjectiveC" value="21820" />
+          <entry key="PLAIN_TEXT" value="673" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.cidr.testingFrameworks.usages" />
@@ -88,7 +87,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sender.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="765">
+            <state relative-caret-position="504">
               <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
             </state>
           </provider>
@@ -97,8 +96,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/receiver.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="885">
-              <caret line="59" selection-start-line="59" selection-end-line="59" />
+            <state relative-caret-position="527">
+              <caret line="53" column="29" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -106,20 +105,21 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gbn.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
-              <caret line="332" selection-start-line="332" selection-end-line="332" />
+            <state relative-caret-position="301">
+              <caret line="144" selection-start-line="144" selection-end-line="144" />
               <folding>
                 <element signature="e#63#175#0" />
                 <element signature="e#176#363#0" />
                 <element signature="e#364#483#0" />
                 <element signature="e#485#2571#0" />
-                <element signature="e#5154#6053#0" />
                 <element signature="e#6055#8469#0" />
                 <element signature="e#8471#8887#0" />
                 <element signature="e#8889#11081#0" />
+                <element signature="e#11102#16685#0" />
                 <element signature="e#16420#17144#0" />
                 <element signature="e#17146#18747#0" />
                 <element signature="e#18749#19431#0" />
+                <element signature="e#19777#20635#1" />
                 <element signature="e#20401#20563#0" />
                 <element signature="e#20565#20607#0" />
                 <element signature="e#20609#20728#0" />
@@ -134,7 +134,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gbn.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
+            <state relative-caret-position="109">
               <caret line="28" column="57" selection-start-line="28" selection-start-column="57" selection-end-line="28" selection-end-column="57" />
               <folding>
                 <element signature="e#31#52#0" expanded="true" />
@@ -178,9 +178,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
-    <option name="width" value="1280" />
-    <option name="height" value="777" />
+    <option name="x" value="1280" />
+    <option name="y" value="-377" />
+    <option name="width" value="1920" />
+    <option name="height" value="1177" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -218,7 +219,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Server/Receiver">
+  <component name="RunManager" selected="Application.Client/Sender">
     <configuration name="Client/Sender" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1 9005 input.txt" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="SenderClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="SenderClient">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -229,7 +230,7 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Server/Receiver" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="9005 b.pdf" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="ReceiverServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="ReceiverServer">
+    <configuration name="Server/Receiver" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="9005 output" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="ReceiverServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="ReceiverServer">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -260,7 +261,7 @@
       <workItem from="1538442187374" duration="3503000" />
       <workItem from="1538445818246" duration="33652000" />
       <workItem from="1538511792950" duration="39780000" />
-      <workItem from="1538589404207" duration="1583000" />
+      <workItem from="1538589404207" duration="7115000" />
     </task>
     <task id="LOCAL-00001" summary="Still working on send/recv">
       <created>1538455218202</created>
@@ -339,30 +340,36 @@
       <option name="project" value="LOCAL" />
       <updated>1538583360320</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Mostly working. Need to investigate why packet 846 has checksum error">
+      <created>1538591143336</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1538591143336</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143586000" />
+    <option name="totallyTimeSpent" value="149118000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="777" extended-state="6" />
-    <editor active="true" />
+    <frame x="1280" y="-377" width="1920" height="1177" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.13327949" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49893504" weight="0.42335767" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49840257" visible="true" weight="0.2986175" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" visible="true" weight="0.3211679" />
+      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" weight="0.4986175" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.3240876" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" weight="0.329927" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50106496" side_tool="true" weight="0.2562212" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.3235023" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" weight="0.32903227" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50159746" side_tool="true" weight="0.2986175" />
       <window_info anchor="bottom" id="Version Control" order="11" weight="0.3299539" />
       <window_info anchor="bottom" id="CMake" order="12" weight="0.3299539" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -410,7 +417,9 @@
     <MESSAGE value="Finished implementing close" />
     <MESSAGE value="Working copy to send a pdf. Now going to implement window size" />
     <MESSAGE value="Finished implementing gbn_reck_dataack, about to test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished implementing gbn_reck_dataack, about to test" />
+    <MESSAGE value="Mostly working. Need to investigate why packet 846 has checksum error" />
+    <MESSAGE value="still investigating checksum issue in last packet" />
+    <option name="LAST_COMMIT_MESSAGE" value="still investigating checksum issue in last packet" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -427,18 +436,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>299</line>
-          <option name="timeStamp" value="95" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>378</line>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>530</line>
+          <line>523</line>
           <option name="timeStamp" value="112" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/gbn.c</url>
+          <line>96</line>
+          <option name="timeStamp" value="113" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -468,23 +472,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sender.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/receiver.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
-          <caret line="59" selection-start-line="59" selection-end-line="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gbn.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
+        <state relative-caret-position="109">
           <caret line="28" column="57" selection-start-line="28" selection-start-column="57" selection-end-line="28" selection-end-column="57" />
           <folding>
             <element signature="e#31#52#0" expanded="true" />
@@ -492,22 +482,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sender.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/receiver.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="53" column="29" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/gbn.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="332" selection-start-line="332" selection-end-line="332" />
+        <state relative-caret-position="301">
+          <caret line="144" selection-start-line="144" selection-end-line="144" />
           <folding>
             <element signature="e#63#175#0" />
             <element signature="e#176#363#0" />
             <element signature="e#364#483#0" />
             <element signature="e#485#2571#0" />
-            <element signature="e#5154#6053#0" />
             <element signature="e#6055#8469#0" />
             <element signature="e#8471#8887#0" />
             <element signature="e#8889#11081#0" />
+            <element signature="e#11102#16685#0" />
             <element signature="e#16420#17144#0" />
             <element signature="e#17146#18747#0" />
             <element signature="e#18749#19431#0" />
+            <element signature="e#19777#20635#1" />
             <element signature="e#20401#20563#0" />
             <element signature="e#20565#20607#0" />
             <element signature="e#20609#20728#0" />
