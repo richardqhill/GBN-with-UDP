@@ -39,9 +39,8 @@ extern int errno;
 #define RST      6        /* Reset packet used to reject new connections */
 
 /*----- Ack status types ----- */
-#define ACKSTATUS_TIMEOUT -1
-#define ACKSTATUS_CORRUPT -2
-#define ACKSTATUS_BADSEQ -3
+#define ACKSTATUS_TIMEOUT -2
+#define ACKSTATUS_CORRUPT -3
 
 /*----- Window Speed Modes ----- */
 #define WINDOW_SLOWMODE 1
@@ -127,10 +126,8 @@ ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags);
 
 void signal_handler();
 
-void set_window_slow();
-void set_window_med();
-void set_window_fast();
-
+void gbn_set_window_slow();
+void gbn_increment_window_size();
 
 
 
