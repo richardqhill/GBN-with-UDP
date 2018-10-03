@@ -102,8 +102,6 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
         client_state.packet_buf[i] = data_packet;
     }
 
-
-
     // Client starts sending data packets to Server
     while(client_state.window_start <= expected_number_of_packets){
 
@@ -128,17 +126,17 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
                 break;
         }
 
-
-        // Potentially linux takes something other than EINTR
-        if((gbn_recv_dataack(sockfd, flags) == -1) && errno == EINTR){
+        ssize_t return_value = gbn_recv_dataack(sockfd, flags);
+        if(return_value == ACKSTATUS_TIMEOUT){
             printf("gbn_send: Client timed out waiting for DATAACK FROM Server\n");
             client_state.recv_ack_timeout_count++;
             errno = 0;
         }
-        else if((gbn_recv_dataack(sockfd, flags) == -1)){
+        else if(return_value == -1){
             printf("gbn_send: gbn_recv_dataack returned -1, not sure why? \n");
         }
-        else{
+        else if (return_value ==0){
+            printf("gbn_send: Client recieved DATACK, timeout count reset\n");
             client_state.recv_ack_timeout_count = 0;
             continue;
         }
@@ -176,6 +174,9 @@ ssize_t gbn_send_data_packet(int sockfd, uint16_t packet_num, int flags){
 ssize_t gbn_recv_dataack(int sockfd, int flags) {
     printf("recv_dataack:\n");
 
+    //Turn off non-blocking mode (i.e. make recvfrom blocking again
+    int flag_control = fcntl(sockfd, F_SETFL, 0);
+
     alarm(TIMEOUT);
 
     // create a place to store DATAACK packet from receiver
@@ -188,7 +189,6 @@ ssize_t gbn_recv_dataack(int sockfd, int flags) {
     alarm(0);
 
     if (result == -1){
-        // the packet recv timeout occured wait again for a packet
         if (errno == EINTR){
             printf("gbn_recv_dataack: ACK TIMEOUT\n");
             return ACKSTATUS_TIMEOUT;
@@ -196,17 +196,19 @@ ssize_t gbn_recv_dataack(int sockfd, int flags) {
         return -1;
     }
 
-    if( gbnhdr_validate_checksum(&packet_from_server))
+    if(gbnhdr_validate_checksum(&packet_from_server))
         return ACKSTATUS_CORRUPT;
 
     // Update Client window start to Server's next expected packet
     if(packet_from_server.type == DATAACK){
         // Only update if next expected is higher than window start in case OOO dataack
-        if(client_state.window_start < packet_from_server.packet_num)
+        if(client_state.window_start < packet_from_server.packet_num) {
             client_state.window_start = packet_from_server.packet_num;
+        }
+        return 0;
     }
 
-    return 0;
+    return -1;
 }
 
 /* Called by Server/Receiver. Initializes server state struct and updates state to Listening */
