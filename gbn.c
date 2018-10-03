@@ -113,12 +113,9 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
         }
 
         // Send variable number of packets based on current Window Size
-        //for(int i=0; i<1; i++){                                     //              !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //for(int i=0; i<client_state.window_size; i++){
-        //    gbn_send_data_packet(sockfd, client_state.window_start + i, flags);
-        //}
-
-        gbn_send_data_packet(sockfd, client_state.window_start, flags);
+        for(int i=0; i<client_state.window_size; i++){
+            gbn_send_data_packet(sockfd, client_state.window_start + i, flags);
+        }
 
         ssize_t return_value = gbn_recv_dataack(sockfd, flags);
         if(return_value == ACKSTATUS_TIMEOUT){
@@ -171,7 +168,7 @@ ssize_t gbn_recv_dataack(int sockfd, int flags) {
     //Turn off non-blocking mode (i.e. make recvfrom blocking again)
     int flag_control = fcntl(sockfd, F_SETFL, 0);
 
-    //alarm(TIMEOUT);              !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    alarm(TIMEOUT);
 
     // create a place to store DATAACK packet from receiver
     gbnhdr packet_from_server;
@@ -195,26 +192,30 @@ ssize_t gbn_recv_dataack(int sockfd, int flags) {
 
     // If Server packet is SYNACK, we have already received one. Drop the packet.
     if(packet_from_server.type == SYNACK) {
-        return 0;
+        // recursively call dataack until we get a non-duplicate DATAACK or timer runs out
+        return gbn_recv_dataack(sockfd, flags);
     }
 
     // Update Client window start to Server's next expected packet
     if(packet_from_server.type == DATAACK){
 
+        state_t temp = client_state;
+
         // First check if we have received an ACK for this packet before
-        if(client_state.window_start == packet_from_server.packet_num){
+        if( packet_from_server.packet_num <= client_state.window_start){
             printf("gbn_send: Client received a DUPLICATE DATACK packet# %d \n", packet_from_server.packet_num);
             gbn_set_window_slow();
+            // recursively call dataack until we get a non-duplicate DATAACK or timer runs out
+            return gbn_recv_dataack(sockfd,flags);
         }
-        else { // If this is a novel DATAACK, update window start
-            // Only update if next expected is higher than window start in case OOO dataack
+        else { // If this is a novel (non-duplicate DATAACK), update window start
             // Do not update if number is higher than possible with windowing. Possibly DATAACK from previous buffer
             uint16_t diff = packet_from_server.packet_num - client_state.window_start;
-            if(client_state.window_start < packet_from_server.packet_num && diff <= WINDOW_FASTMODE) {
+            if( (packet_from_server.packet_num > client_state.window_start) && (diff <= WINDOW_FASTMODE)) {
                 client_state.window_start = packet_from_server.packet_num;
             }
 
-            printf("gbn_send: Client received DATACK packet# %d \n", packet_from_server.packet_num);
+            printf("gbn_send: Client received DATACK. Server requesting packet# %d \n", packet_from_server.packet_num);
             gbn_increment_window_size();
         }
         return 0;
@@ -312,14 +313,13 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
 
 
     gbnhdr packet_from_client;
-    // Loop until we obtain the next expected packet num.
-    // Dropping corrupted packets, and storing OOO Data packets into state buffer
+    // Loop until we obtain the next expected packet num or FIN.
+    // Dropping redundant or corrupted packets. Storing future Data packets into state buffer
     while(TRUE){
         printf("-------------------------------------------\n");
         printf("gbn_recv: Server waiting to receive packets \n");
 
-        state_t temp_server = server_state;
-
+        state_t temp_server = server_state; // debugging
 
         gbnhdr_clear_packet(&packet_from_client);
         if((recvfrom(sockfd, &packet_from_client, sizeof(packet_from_client), flags, NULL, NULL)) == -1) {
@@ -347,28 +347,38 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
                 }
             }
 
-            // Do not want to accidentally store FIN packet into state OOO packet buffer
+            // Received FIN, break to process
             else if(packet_from_client.type == FIN){
-                    break;
-                }
+                break;
+            }
 
-            // If Client has started a new call of GBN send, we need to clear the
+            // If Client has started a new call of GBN send, we need to clear the server state struct
             else if (packet_from_client.packet_num == 1 && server_state.next_expected_pack_num == 1025) {
                 memset(server_state.packet_buf,0,sizeof(server_state.packet_buf));
                 server_state.next_expected_pack_num = 1;
                 break;
             }
 
-            // Store OOO packets into state struct packet buf
-            else if(packet_from_client.packet_num != server_state.next_expected_pack_num){
+            // Received next packet to write, break to process
+            else if ((packet_from_client.type==DATA) &&
+                     (packet_from_client.packet_num == server_state.next_expected_pack_num))
+                break;
+
+            // Drop OOO packets that have already been written
+            else if((packet_from_client.type==DATA) &&
+            (packet_from_client.packet_num < server_state.next_expected_pack_num)) {
+                continue;
+            }
+
+            // Store future OOO packets into state struct packet buf
+            else if((packet_from_client.type==DATA) &&
+            (packet_from_client.packet_num > server_state.next_expected_pack_num)){
                 memcpy(&server_state.packet_buf[packet_from_client.packet_num],&packet_from_client, sizeof(gbnhdr));
 
-                printf("Sending DATAACK for OOO packet. Expect packet #%d, received packet#%d \n",
-                        server_state.next_expected_pack_num, packet_from_client.packet_num);
+                printf("Storing OOO packet #%d. Sending DATAACK, expecting packet #%d \n",
+                        packet_from_client.packet_num, server_state.next_expected_pack_num);
                 gbn_send_dataack(sockfd,server_state.next_expected_pack_num,flags);
             }
-            else if (packet_from_client.packet_num == server_state.next_expected_pack_num)
-                break;
         }
     }
 
@@ -410,8 +420,6 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
 
 /* Helper fx called by Server/Receiver to send DATAACK to Client */
 ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags){
-
-    return 0; // diagnose issue troubleshoot
 
     // Retrieve Server sockaddr info from Client state struct
     struct sockaddr* client = server_state.client_ptr;
@@ -514,7 +522,7 @@ uint8_t gbnhdr_validate_checksum(gbnhdr *packet){
     uint16_t calculated_checksum = checksum((uint16_t *)packet, sizeof(*packet) / sizeof(uint16_t));
 
     if (received_checksum == calculated_checksum){
-        printf("validate_packet: success, checksum %d\n", received_checksum);
+        //printf("validate_packet: success, checksum %d\n", received_checksum);
         return TRUE;
     }
     else{
@@ -549,7 +557,8 @@ void gbn_increment_window_size(){
         client_state.window_size = WINDOW_FASTMODE;
     }
     else if(client_state.window_size == WINDOW_FASTMODE) {
-        printf("GBN: Window already at Fast \n");
+        ;// Do nothing
+        // printf("GBN: Window already at Fast \n");
     }
 }
 
