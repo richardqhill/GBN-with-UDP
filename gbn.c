@@ -418,17 +418,46 @@ int gbn_close(int sockfd){
         server_state.state = CLOSED;
         return close(sockfd);
     }
+
     else if(client_state.role == CLIENT){
 
         int sent_fin_count = 0;
+        int max_fin_attempts = 5;
 
-        // To Do: attempt to send fin and receive finack
-        client_state.state = FIN_SENT;
+        //Build a Fin Packet
+        gbnhdr fin_packet;
+        gbnhdr_packet_builder(&fin_packet,FIN,0,0,NULL);
 
-        // do some stuff
+        // Retrieve Server sockaddr info from Client state struct
+        struct sockaddr* server = client_state.server_ptr;
+        socklen_t socklen = client_state.dest_socklen;
 
-        client_state.state = CLOSED;
+        while(sent_fin_count<max_fin_attempts){
 
+            if ((sendto(sockfd, &fin_packet, sizeof(gbnhdr), 0, server, socklen)) == -1){
+                printf("Client failed to send Fin packet\n");
+            }
+            else {
+                printf("Client sent Fin packet \n");
+                client_state.state = FIN_SENT;
+            }
+
+            sent_fin_count++;
+
+            // Create packet to store Finack
+            gbnhdr packet_from_server;
+            gbnhdr_clear_packet(&packet_from_server);
+
+            alarm(TIMEOUT);
+            recvfrom(sockfd, &packet_from_server, sizeof(gbnhdr),0,NULL,NULL);
+            alarm(0);
+
+            if(gbnhdr_validate_checksum(&packet_from_server) && packet_from_server.type == FINACK){
+
+                client_state.state = CLOSED;
+                break;
+            }
+        }
         return close(sockfd);
     }
 }

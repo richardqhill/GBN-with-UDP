@@ -13,9 +13,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="GBN RECV implemented. Still need to test server state reset at pack num 1024">
+    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="Finished implementing gbn_reck_dataack, about to test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/C.includecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SenderClient" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SenderClient" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.c" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.c" afterDir="false" />
@@ -23,6 +22,7 @@
       <change beforePath="$PROJECT_DIR$/input" beforeDir="false" afterPath="$PROJECT_DIR$/input" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output" beforeDir="false" afterPath="$PROJECT_DIR$/output" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/receiver" beforeDir="false" afterPath="$PROJECT_DIR$/receiver" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/receiver.o" beforeDir="false" afterPath="$PROJECT_DIR$/receiver.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sender" beforeDir="false" afterPath="$PROJECT_DIR$/sender" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -65,16 +65,16 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="c" value="17143" />
-          <entry key="h" value="1259" />
-          <entry key="txt" value="523" />
+          <entry key="c" value="17556" />
+          <entry key="h" value="1271" />
+          <entry key="txt" value="577" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CMakeLists.txt" value="102" />
-          <entry key="ObjectiveC" value="18402" />
-          <entry key="PLAIN_TEXT" value="421" />
+          <entry key="ObjectiveC" value="18827" />
+          <entry key="PLAIN_TEXT" value="475" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.cidr.testingFrameworks.usages" />
@@ -97,8 +97,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/receiver.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="496">
-                  <caret line="65" column="11" selection-start-line="65" selection-start-column="11" selection-end-line="65" selection-end-column="11" />
+                <state relative-caret-position="618">
+                  <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
                 </state>
               </provider>
             </entry>
@@ -106,19 +106,19 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gbn.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="693">
-                  <caret line="134" column="36" lean-forward="true" selection-start-line="134" selection-start-column="36" selection-end-line="134" selection-end-column="36" />
+                <state relative-caret-position="525">
+                  <caret line="448" column="52" lean-forward="true" selection-start-line="448" selection-start-column="52" selection-end-line="448" selection-end-column="52" />
                   <folding>
                     <element signature="e#63#175#0" />
                     <element signature="e#176#363#0" />
                     <element signature="e#364#483#0" />
                     <element signature="e#485#2489#0" />
+                    <element signature="e#2491#4956#0" />
                     <element signature="e#4974#5884#0" />
                     <element signature="e#5529#5933#0" />
                     <element signature="e#5935#7488#0" />
                     <element signature="e#16368#21036#0" />
                     <element signature="e#21040#21831#0" />
-                    <element signature="e#13664#14288#0" />
                     <element signature="e#22460#23193#0" />
                     <element signature="e#23195#24161#0" />
                     <element signature="e#16021#16105#1" />
@@ -152,8 +152,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gbn.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="199">
-                  <caret line="81" column="29" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
+                <state relative-caret-position="469">
+                  <caret line="99" column="12" selection-start-line="99" selection-start-column="12" selection-end-line="99" selection-end-column="12" />
                   <folding>
                     <element signature="e#31#52#0" expanded="true" />
                   </folding>
@@ -266,7 +266,7 @@
       <workItem from="1538435822411" duration="4624000" />
       <workItem from="1538442187374" duration="3503000" />
       <workItem from="1538445818246" duration="33652000" />
-      <workItem from="1538511792950" duration="20873000" />
+      <workItem from="1538511792950" duration="22981000" />
     </task>
     <task id="LOCAL-00001" summary="Still working on send/recv">
       <created>1538455218202</created>
@@ -317,11 +317,18 @@
       <option name="project" value="LOCAL" />
       <updated>1538538090870</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Finished implementing gbn_reck_dataack, about to test">
+      <created>1538541317509</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1538541317509</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="123096000" />
+    <option name="totallyTimeSpent" value="125204000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="-377" width="1920" height="1177" extended-state="6" />
@@ -339,7 +346,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="8" weight="0.32534564" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" weight="0.19447005" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" visible="true" weight="0.19447005" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50080776" side_tool="true" weight="0.3080292" />
       <window_info anchor="bottom" id="Version Control" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="CMake" order="12" weight="0.3299539" />
@@ -385,7 +392,8 @@
     <MESSAGE value="Good lord. Not a working copy but need to save this." />
     <MESSAGE value="GBN RECV implemented. Still need to test server state reset at pack num 1024" />
     <MESSAGE value="About to test gbn_recv_dataack" />
-    <option name="LAST_COMMIT_MESSAGE" value="About to test gbn_recv_dataack" />
+    <MESSAGE value="Finished implementing gbn_reck_dataack, about to test" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished implementing gbn_reck_dataack, about to test" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -402,13 +410,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>350</line>
+          <line>351</line>
           <option name="timeStamp" value="78" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>353</line>
+          <line>354</line>
           <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/gbn.c</url>
+          <line>450</line>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -447,8 +460,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/receiver.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="65" column="11" selection-start-line="65" selection-start-column="11" selection-end-line="65" selection-end-column="11" />
+        <state relative-caret-position="618">
+          <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
         </state>
       </provider>
     </entry>
@@ -464,19 +477,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gbn.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="134" column="36" lean-forward="true" selection-start-line="134" selection-start-column="36" selection-end-line="134" selection-end-column="36" />
+        <state relative-caret-position="525">
+          <caret line="448" column="52" lean-forward="true" selection-start-line="448" selection-start-column="52" selection-end-line="448" selection-end-column="52" />
           <folding>
             <element signature="e#63#175#0" />
             <element signature="e#176#363#0" />
             <element signature="e#364#483#0" />
             <element signature="e#485#2489#0" />
+            <element signature="e#2491#4956#0" />
             <element signature="e#4974#5884#0" />
             <element signature="e#5529#5933#0" />
             <element signature="e#5935#7488#0" />
             <element signature="e#16368#21036#0" />
             <element signature="e#21040#21831#0" />
-            <element signature="e#13664#14288#0" />
             <element signature="e#22460#23193#0" />
             <element signature="e#23195#24161#0" />
             <element signature="e#16021#16105#1" />
