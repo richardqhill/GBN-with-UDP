@@ -108,9 +108,7 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
             return -1;
         }
 
-        uint8_t window_size = client_state.window_size;
-
-        switch(window_size) {
+        switch(client_state.window_size) {
             case WINDOW_FASTMODE:
                 // create a for loop?
                 gbn_send_data_packet(sockfd, client_state.window_start, flags);
@@ -122,6 +120,7 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
                 break;
 
             case WINDOW_SLOWMODE:
+                gbn_send_data_packet(sockfd, 12, flags);
                 gbn_send_data_packet(sockfd, client_state.window_start, flags);
                 break;
         }
@@ -155,19 +154,28 @@ ssize_t gbn_send_data_packet(int sockfd, uint16_t packet_num, int flags){
     struct sockaddr* server = client_state.server_ptr;
     socklen_t socklen = client_state.dest_socklen;
 
+    //state_t temp = client_state;
+    //gbnhdr* temp2 = &client_state.packet_buf[packet_num];
+
     if ((sendto(sockfd, &client_state.packet_buf[packet_num], sizeof(gbnhdr), flags, server, socklen)) == -1) {
         printf("Client failed to send packet# %d\n", packet_num);
         return -1;
     }
-    else
-        printf("Client sent packet# %d\n",packet_num);
-    return -1;
+    else {
+        printf("Client sent packet# %d\n", packet_num);
+        return 0;
+    }
 }
 
 /* Helper fx for Client/Sender to keep track of Server dataacks */
 ssize_t gbn_recv_dataack(int sockfd, gbnhdr *packet, int flags) {
     printf("recv_ack:\n");
 
+
+    // !!!!!!
+    // when we receive dataack for packet num 1024, make sure to clear client buffer and client packet count
+
+    client_state.window_start++;
     return 0; // UPDATE!
 
     // make sure we update client state window start
@@ -191,7 +199,7 @@ int gbn_listen(int sockfd, int backlog){
     memset(&server_state,0,sizeof(server_state));
     server_state.state = LISTENING;
     server_state.role = SERVER;
-    server_state.next_expected_pack_num = 0; // Set to 0 so that next expected packet num is packet #1
+    server_state.next_expected_pack_num = 1; // Set to 0 so that next expected packet num is packet #1
 
     return(0);
 }
@@ -243,17 +251,13 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
 
     // Clear buffer
     memset(buf, 0, len);
-
     size_t bytes_written_to_buf = 0;
 
-    // double check this works. Maybe make Sender send things out of order
     // If next expected packet is stored in our packet buff, write it to buffer
-    if(server_state.packet_buf[server_state.next_expected_pack_num].type == DATA){
-
-        printf("gbn_recv: received DATA packet\n");
+    if(server_state.packet_buf[server_state.next_expected_pack_num].type == DATA){ // Figure out how to test this.... Maybe make Sender send things out of order
+        printf("gbn_recv: pulled DATA packet out of OOO buffer \n");
 
         memcpy(buf, server_state.packet_buf[server_state.next_expected_pack_num].data, len);
-
         bytes_written_to_buf = server_state.packet_buf[server_state.next_expected_pack_num].data_length_in_bytes;
 
         server_state.next_expected_pack_num++;
@@ -262,40 +266,52 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
         return bytes_written_to_buf;
     }
 
-
-    // Retrieve Client sockaddr from Server state struct so that we can send DATAACKs
-    struct sockaddr* client = server_state.client_ptr;
-    socklen_t socklen = server_state.dest_socklen;
-
     gbnhdr packet_from_client;
-    gbnhdr_clear_packet(&packet_from_client);
 
-    // Loop until we obtain a non-corrupted packet
+    // Retrieve Server sockaddr info from Client state struct
+    struct sockaddr* client = server_state.client_ptr;
+    socklen_t socklen = client_state.dest_socklen;
+
+    // Loop until we obtain the next expected packet num.
+    // Dropping corrupted packets, and storing OOO Data packets into state buffer
     while(TRUE){
         printf("-------------------------------------------\n");
         printf("gbn_recv: Server waiting to receive packets \n");
 
         gbnhdr_clear_packet(&packet_from_client);
-
         if((recvfrom(sockfd, &packet_from_client, sizeof(packet_from_client), flags, NULL, NULL)) == -1) {
             printf("Server stopped receiving from Client. Exiting... \n");
             // I think this recvfrom needs a timeout to call close if no packets come in 10 seconds?
             return 0;
         }
         else{
-            // Drop corrupted packets
-            if(gbnhdr_validate_checksum(&packet_from_client) == FALSE)
+            // If Server/Receiver's SYNACK was lost, Client will still be sending SYN
+            if (packet_from_client.type == SYN){
+                printf("gbn_recv: sending SYNACK \n");
+
+                gbnhdr synack_packet;
+                gbnhdr_packet_builder(&synack_packet, SYNACK, 0, 0, NULL);
+                if((sendto(sockfd, &synack_packet, sizeof(synack_packet), 0, client, socklen)) == -1){
+                    printf("Server failed to send SYNACK \n");
+                }
+                else{
+                    printf("Server sent SYNACK and considers connection established! \n");
+                    client_state.state = ESTABLISHED; // Redundant from gbn_accept
+                }
+            }
+
+            // Drop packets if checksum is not valid (corrupted)
+            else if(gbnhdr_validate_checksum(&packet_from_client) == FALSE)
                 continue;
 
             // Store OOO packets into state struct packet buf
-            if(packet_from_client.packet_num != server_state.next_expected_pack_num){
-
+            else if(packet_from_client.packet_num != server_state.next_expected_pack_num){
                 memcpy(&server_state.packet_buf[packet_from_client.packet_num],&packet_from_client, sizeof(gbnhdr));
 
-                // TEST THIS!!!!!
-                state_t temp = server_state;
+                state_t temp = server_state;   // TEST THIS!!!!!
 
-                printf("Sending DATAACK for OOO packet. Expect packet #%d \n", server_state.next_expected_pack_num);
+                printf("Sending DATAACK for OOO packet. Expect packet #%d, received packet#%d \n",
+                        server_state.next_expected_pack_num, packet_from_client.packet_num);
                 gbn_send_dataack(sockfd,server_state.next_expected_pack_num,flags);
             }
             else if (packet_from_client.packet_num == server_state.next_expected_pack_num)
@@ -314,21 +330,21 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
         // and clear our OOO packet buffer
         if(packet_from_client.packet_num == 1024){
             server_state.next_expected_pack_num = 1;
+            state_t temp = server_state;
             memset(server_state.packet_buf,0,sizeof(server_state.packet_buf));
             // Does this wipe correctly?
-            printf("gbn_recv: recieved packet num 1024, restarting packet count and OOO buffer\n");
+            temp = server_state;
+            printf("gbn_recv: received packet num 1024, restarting packet count and OOO buffer\n");
         }
         else{
             server_state.next_expected_pack_num++;
             printf("Sending DATAACK for in order packet #%d \n", packet_from_client.packet_num);
             gbn_send_dataack(sockfd,server_state.next_expected_pack_num,flags);
-
-            return bytes_written_to_buf;
         }
+        return bytes_written_to_buf;
     }
 
-    // If packet contains FIN, send FINACK
-    // I should not increment packet num in case FINACK gets lost
+    // If FIN packet, send FINACK
     else if (packet_from_client.type == FIN) {
         printf("gbn_recv: received FIN packet \n");
         server_state.state = FIN_RCVD;
@@ -348,7 +364,6 @@ ssize_t gbn_recv(int sockfd, void *buf, size_t len, int flags){
     printf("gbn_recv: Error. Did not receive DATA or FIN packet \n");
     return -1;
 }
-
 
 /* Helper fx called by Server/Receiver to send DATAACK to Client */
 ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags){
@@ -379,13 +394,6 @@ ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags){
 /* Called by Client/Sender AND Server/Receiver to close their sockets*/
 int gbn_close(int sockfd){
     printf("gbn_close: \n");
-
-
-
-    /* TODO: Your code here. */
-    // clear out state structs
-    // free packets??
-    // stop timers???
 
     if (server_state.role == SERVER){
         server_state.state = CLOSED;
@@ -469,7 +477,6 @@ void set_window_fast(){
     printf("set_window_fast: window=%d\n", WINDOW_FASTMODE);
     client_state.window_size = WINDOW_FASTMODE;
 }
-
 
 /* Provided by instructor to introduce corruption and packet dropping */
 ssize_t maybe_recvfrom(int  s, char *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen){

@@ -13,11 +13,19 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="Updated gbnhdr packet maker and succesfully created every packed in gbnsend">
+    <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="Good lord. Not a working copy but need to save this.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/SenderClient" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SenderClient" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.c" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gbn.h" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gbn.o" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input" beforeDir="false" afterPath="$PROJECT_DIR$/input" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output" beforeDir="false" afterPath="$PROJECT_DIR$/output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/receiver" beforeDir="false" afterPath="$PROJECT_DIR$/receiver" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sender" beforeDir="false" afterPath="$PROJECT_DIR$/sender" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,29 +54,29 @@
         <counts>
           <entry key="Makefile" value="1" />
           <entry key="c" value="15" />
-          <entry key="h" value="8" />
+          <entry key="h" value="9" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CMakeLists.txt" value="1" />
-          <entry key="ObjectiveC" value="23" />
+          <entry key="ObjectiveC" value="24" />
           <entry key="PLAIN_TEXT" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="c" value="15270" />
+          <entry key="c" value="15921" />
           <entry key="h" value="1259" />
-          <entry key="txt" value="353" />
+          <entry key="txt" value="406" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CMakeLists.txt" value="102" />
-          <entry key="ObjectiveC" value="16529" />
-          <entry key="PLAIN_TEXT" value="251" />
+          <entry key="ObjectiveC" value="17180" />
+          <entry key="PLAIN_TEXT" value="304" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.cidr.testingFrameworks.usages" />
@@ -76,68 +84,86 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sender.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="50" column="41" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/receiver.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="606">
-              <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gbn.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1320">
-              <caret line="514" lean-forward="true" selection-start-line="514" selection-end-line="514" />
-              <folding>
-                <element signature="e#63#175#0" />
-                <element signature="e#176#363#0" />
-                <element signature="e#364#483#0" />
-                <element signature="e#485#2489#0" />
-                <element signature="e#2491#4956#0" />
-                <element signature="e#5249#5318#0" />
-                <element signature="e#5861#6195#1" />
-                <element signature="e#5529#5933#0" />
-                <element signature="e#5935#7488#0" />
-                <element signature="e#16368#21036#0" />
-                <element signature="e#21040#21831#0" />
-                <element signature="e#22460#23193#0" />
-                <element signature="e#23195#24161#0" />
-                <element signature="e#24327#24369#0" />
-                <element signature="e#24370#24504#0" />
-                <element signature="e#24505#24635#0" />
-                <element signature="e#24636#24770#0" />
-                <element signature="e#24773#25680#0" />
-                <element signature="e#25682#25946#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gbn.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="632">
-              <caret line="125" column="69" selection-start-line="125" selection-start-column="69" selection-end-line="125" selection-end-column="69" />
-              <folding>
-                <element signature="e#31#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.66773164">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/sender.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="737">
+                  <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/receiver.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="406">
+                  <caret line="59" selection-start-line="59" selection-end-line="59" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/gbn.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="270">
+                  <caret line="246" column="16" selection-start-line="246" selection-start-column="8" selection-end-line="246" selection-end-column="16" />
+                  <folding>
+                    <element signature="e#63#175#0" />
+                    <element signature="e#364#483#0" />
+                    <element signature="e#4974#5884#0" />
+                    <element signature="e#5861#6195#1" />
+                    <element signature="e#5529#5933#0" />
+                    <element signature="e#5935#7488#0" />
+                    <element signature="e#21040#21831#0" />
+                    <element signature="e#13664#14288#0" />
+                    <element signature="e#22460#23193#0" />
+                    <element signature="e#23195#24161#0" />
+                    <element signature="e#16021#16105#1" />
+                    <element signature="e#24327#24369#0" />
+                    <element signature="e#24370#24504#0" />
+                    <element signature="e#24505#24635#0" />
+                    <element signature="e#24636#24770#0" />
+                    <element signature="e#24773#25680#0" />
+                    <element signature="e#25682#25946#0" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/gbn.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="1482">
+                  <caret line="125" column="69" selection-start-line="125" selection-start-column="69" selection-end-line="125" selection-end-column="69" />
+                  <folding>
+                    <element signature="e#31#52#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/gbn.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="98">
+                  <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
+                  <folding>
+                    <element signature="e#31#52#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -172,7 +198,7 @@
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1280" />
-    <option name="y" value="-177" />
+    <option name="y" value="-377" />
     <option name="width" value="1920" />
     <option name="height" value="1177" />
   </component>
@@ -199,7 +225,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Client/Sender">
+  <component name="RunManager" selected="Application.Server/Receiver">
     <configuration name="Client/Sender" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1 9005 input" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="SenderClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="SenderClient">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -240,7 +266,7 @@
       <workItem from="1538435822411" duration="4624000" />
       <workItem from="1538442187374" duration="3503000" />
       <workItem from="1538445818246" duration="33652000" />
-      <workItem from="1538511792950" duration="10657000" />
+      <workItem from="1538511792950" duration="15674000" />
     </task>
     <task id="LOCAL-00001" summary="Still working on send/recv">
       <created>1538455218202</created>
@@ -270,14 +296,21 @@
       <option name="project" value="LOCAL" />
       <updated>1538508440813</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Good lord. Not a working copy but need to save this.">
+      <created>1538530779766</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1538530779766</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="112880000" />
+    <option name="totallyTimeSpent" value="117897000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1280" y="-177" width="1920" height="1177" extended-state="6" />
+    <frame x="1280" y="-377" width="1920" height="1177" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.08723748" />
@@ -288,10 +321,10 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.25693431" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" weight="0.3138686" />
+      <window_info active="true" anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" visible="true" weight="0.40552995" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.32554746" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.32534564" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" weight="0.19447005" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50080776" side_tool="true" weight="0.3080292" />
       <window_info anchor="bottom" id="Version Control" order="11" show_stripe_button="false" />
@@ -335,7 +368,8 @@
     <MESSAGE value="Getting closer to writing a single packet to output file" />
     <MESSAGE value="Successfully wrote a single character from input file to output file" />
     <MESSAGE value="Updated gbnhdr packet maker and succesfully created every packed in gbnsend" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated gbnhdr packet maker and succesfully created every packed in gbnsend" />
+    <MESSAGE value="Good lord. Not a working copy but need to save this." />
+    <option name="LAST_COMMIT_MESSAGE" value="Good lord. Not a working copy but need to save this." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -352,13 +386,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>295</line>
-          <option name="timeStamp" value="61" />
+          <line>332</line>
+          <option name="timeStamp" value="78" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>318</line>
-          <option name="timeStamp" value="64" />
+          <line>335</line>
+          <option name="timeStamp" value="79" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -390,14 +424,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sender.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="50" column="41" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
+        <state relative-caret-position="737">
+          <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/receiver.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="59" selection-start-line="59" selection-end-line="59" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gbn.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="632">
+        <state relative-caret-position="1482">
           <caret line="125" column="69" selection-start-line="125" selection-start-column="69" selection-end-line="125" selection-end-column="69" />
           <folding>
             <element signature="e#31#52#0" expanded="true" />
@@ -405,31 +446,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/receiver.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="606">
-          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gbn.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="514" lean-forward="true" selection-start-line="514" selection-end-line="514" />
+        <state relative-caret-position="270">
+          <caret line="246" column="16" selection-start-line="246" selection-start-column="8" selection-end-line="246" selection-end-column="16" />
           <folding>
             <element signature="e#63#175#0" />
-            <element signature="e#176#363#0" />
             <element signature="e#364#483#0" />
-            <element signature="e#485#2489#0" />
-            <element signature="e#2491#4956#0" />
-            <element signature="e#5249#5318#0" />
+            <element signature="e#4974#5884#0" />
             <element signature="e#5861#6195#1" />
             <element signature="e#5529#5933#0" />
             <element signature="e#5935#7488#0" />
-            <element signature="e#16368#21036#0" />
             <element signature="e#21040#21831#0" />
+            <element signature="e#13664#14288#0" />
             <element signature="e#22460#23193#0" />
             <element signature="e#23195#24161#0" />
+            <element signature="e#16021#16105#1" />
             <element signature="e#24327#24369#0" />
             <element signature="e#24370#24504#0" />
             <element signature="e#24505#24635#0" />
