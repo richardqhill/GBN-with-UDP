@@ -122,7 +122,7 @@ void gbnhdr_clear_packet(gbnhdr *packet);
 uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t payload_length, const void *buf);
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet);
 ssize_t gbn_send_data_packet(int sockfd, uint16_t packet_num, int flags);
-ssize_t gbn_recv_dataack(int sockfd, gbnhdr *packet, int flags);
+ssize_t gbn_recv_dataack(int sockfd, int flags);
 ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags);
 
 void signal_handler();

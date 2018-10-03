@@ -73,13 +73,16 @@ int gbn_connect(int sockfd, const struct sockaddr *server, socklen_t socklen){
 ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
     printf("gbn_send:\n");
 
-
     uint16_t length_of_last_packet_in_buf = (uint16_t)(len % DATALEN);
     size_t expected_number_of_packets;
     if(length_of_last_packet_in_buf == 0)
         expected_number_of_packets = len / DATALEN;
     else
         expected_number_of_packets = len / DATALEN + 1;
+
+    // Reset client state in case gbn_send has been called previously
+    client_state.window_start = 1; // First packet num is #1 (not #0)
+    memset(client_state.packet_buf,0,sizeof(client_state.packet_buf));
 
     // Create every packet needed for this buffer and store into the client state struct
     int builder_offset = 0;
@@ -125,13 +128,15 @@ ssize_t gbn_send(int sockfd, const void *buf, size_t len, int flags){
                 break;
         }
 
-        // create a place to store DATAACK packet from receiver
-        gbnhdr packet_from_server;
-        gbnhdr_clear_packet(&packet_from_server);
 
-        if((gbn_recv_dataack(sockfd, &packet_from_server, flags) == -1)){
-
+        // Potentially linux takes something other than EINTR
+        if((gbn_recv_dataack(sockfd, flags) == -1) && errno == EINTR){
+            printf("gbn_send: Client timed out waiting for DATAACK FROM Server\n");
             client_state.recv_ack_timeout_count++;
+            errno = 0;
+        }
+        else if((gbn_recv_dataack(sockfd, flags) == -1)){
+            printf("gbn_send: gbn_recv_dataack returned -1, not sure why? \n");
         }
         else{
             client_state.recv_ack_timeout_count = 0;
@@ -168,28 +173,40 @@ ssize_t gbn_send_data_packet(int sockfd, uint16_t packet_num, int flags){
 }
 
 /* Helper fx for Client/Sender to keep track of Server dataacks */
-ssize_t gbn_recv_dataack(int sockfd, gbnhdr *packet, int flags) {
-    printf("recv_ack:\n");
+ssize_t gbn_recv_dataack(int sockfd, int flags) {
+    printf("recv_dataack:\n");
 
-
-    // !!!!!!
-    // when we receive dataack for packet num 1024, make sure to clear client buffer and client packet count
-
-    client_state.window_start++;
-    return 0; // UPDATE!
-
-    // make sure we update client state window start
-
-    gbnhdr_clear_packet(packet);
-
-    // set the signal alarm
     alarm(TIMEOUT);
 
-    // the packet is corrupt
-    if (gbnhdr_validate_checksum(packet)) {
-        printf("recv_ack: ACK CORRUPT\n");
-        return ACKSTATUS_CORRUPT;
+    // create a place to store DATAACK packet from receiver
+    gbnhdr packet_from_server;
+    gbnhdr_clear_packet(&packet_from_server);
+
+    ssize_t result = recvfrom(sockfd, &packet_from_server, sizeof(gbnhdr), flags, NULL, NULL);
+
+    // if recvfrom has returned, turn off alarm
+    alarm(0);
+
+    if (result == -1){
+        // the packet recv timeout occured wait again for a packet
+        if (errno == EINTR){
+            printf("gbn_recv_dataack: ACK TIMEOUT\n");
+            return ACKSTATUS_TIMEOUT;
+        }
+        return -1;
     }
+
+    if( gbnhdr_validate_checksum(&packet_from_server))
+        return ACKSTATUS_CORRUPT;
+
+    // Update Client window start to Server's next expected packet
+    if(packet_from_server.type == DATAACK){
+        // Only update if next expected is higher than window start in case OOO dataack
+        if(client_state.window_start < packet_from_server.packet_num)
+            client_state.window_start = packet_from_server.packet_num;
+    }
+
+    return 0;
 }
 
 /* Called by Server/Receiver. Initializes server state struct and updates state to Listening */
