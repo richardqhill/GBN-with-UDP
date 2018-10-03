@@ -14,12 +14,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a32210d-b56c-45f2-99f2-98d97d7464cf" name="Default Changelist" comment="Finished implementing gbn_reck_dataack, about to test">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/richardhill.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/richardhill.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ReceiverServer.dir/gbn.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SenderClient.dir/gbn.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/ReceiverServer" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SenderClient" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SenderClient" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.c" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gbn.h" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gbn.o" beforeDir="false" afterPath="$PROJECT_DIR$/gbn.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input" beforeDir="false" afterPath="$PROJECT_DIR$/input" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output" beforeDir="false" afterPath="$PROJECT_DIR$/output" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/receiver" beforeDir="false" afterPath="$PROJECT_DIR$/receiver" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/receiver.o" beforeDir="false" afterPath="$PROJECT_DIR$/receiver.o" afterDir="false" />
@@ -65,16 +70,16 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="c" value="17556" />
-          <entry key="h" value="1271" />
-          <entry key="txt" value="577" />
+          <entry key="c" value="18736" />
+          <entry key="h" value="1279" />
+          <entry key="txt" value="584" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CMakeLists.txt" value="102" />
-          <entry key="ObjectiveC" value="18827" />
-          <entry key="PLAIN_TEXT" value="475" />
+          <entry key="ObjectiveC" value="20015" />
+          <entry key="PLAIN_TEXT" value="482" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.cidr.testingFrameworks.usages" />
@@ -82,7 +87,7 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.66773164">
+    <splitter split-orientation="horizontal" split-proportion="0.55910546">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
@@ -97,8 +102,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/receiver.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="618">
-                  <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
+                <state relative-caret-position="379">
+                  <caret line="59" selection-start-line="59" selection-end-line="59" />
                 </state>
               </provider>
             </entry>
@@ -106,8 +111,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gbn.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="525">
-                  <caret line="448" column="52" lean-forward="true" selection-start-line="448" selection-start-column="52" selection-end-line="448" selection-end-column="52" />
+                <state relative-caret-position="403">
+                  <caret line="254" column="55" lean-forward="true" selection-start-line="254" selection-start-column="55" selection-end-line="254" selection-end-column="55" />
                   <folding>
                     <element signature="e#63#175#0" />
                     <element signature="e#176#363#0" />
@@ -115,10 +120,11 @@
                     <element signature="e#485#2489#0" />
                     <element signature="e#2491#4956#0" />
                     <element signature="e#4974#5884#0" />
+                    <element signature="e#6318#7567#0" />
                     <element signature="e#5529#5933#0" />
-                    <element signature="e#5935#7488#0" />
-                    <element signature="e#16368#21036#0" />
-                    <element signature="e#21040#21831#0" />
+                    <element signature="e#9765#15009#0" />
+                    <element signature="e#14858#15787#0" />
+                    <element signature="e#16029#17482#1" />
                     <element signature="e#22460#23193#0" />
                     <element signature="e#23195#24161#0" />
                     <element signature="e#16021#16105#1" />
@@ -136,8 +142,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/gbn.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="315">
-                  <caret line="21" column="14" lean-forward="true" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+                <state relative-caret-position="216">
+                  <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
                   <folding>
                     <element signature="e#31#52#0" expanded="true" />
                   </folding>
@@ -152,7 +158,7 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gbn.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="469">
+                <state relative-caret-position="1156">
                   <caret line="99" column="12" selection-start-line="99" selection-start-column="12" selection-end-line="99" selection-end-column="12" />
                   <folding>
                     <element signature="e#31#52#0" expanded="true" />
@@ -173,6 +179,7 @@
       <find>connect</find>
       <find>bytes_written_to_buf</find>
       <find>gbnhdr_packet_builder</find>
+      <find>checksum</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,11 +214,24 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="NDSHW1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="NDSHW1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="dynamic.analysis.tools.valgrind" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.spelling" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -225,8 +245,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Client/Sender">
-    <configuration name="Client/Sender" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1 9005 input" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="SenderClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="SenderClient">
+  <component name="RunManager" selected="Application.Server/Receiver">
+    <configuration name="Client/Sender" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1 9005 input.txt" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="SenderClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="SenderClient">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -236,7 +256,7 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Server/Receiver" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="9005 output" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="ReceiverServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="ReceiverServer">
+    <configuration name="Server/Receiver" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="9005 b.pdf" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="NDSHW1" TARGET_NAME="ReceiverServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="NDSHW1" RUN_TARGET_NAME="ReceiverServer">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -266,7 +286,7 @@
       <workItem from="1538435822411" duration="4624000" />
       <workItem from="1538442187374" duration="3503000" />
       <workItem from="1538445818246" duration="33652000" />
-      <workItem from="1538511792950" duration="22981000" />
+      <workItem from="1538511792950" duration="33197000" />
     </task>
     <task id="LOCAL-00001" summary="Still working on send/recv">
       <created>1538455218202</created>
@@ -324,17 +344,23 @@
       <option name="project" value="LOCAL" />
       <updated>1538541317509</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Finished implementing close">
+      <created>1538544355467</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1538544355467</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="125204000" />
+    <option name="totallyTimeSpent" value="135420000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="-377" width="1920" height="1177" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.08723748" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.086794466" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -342,11 +368,11 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.2562212" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" weight="0.40552995" />
+      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.4983845" visible="true" weight="0.38525346" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="8" weight="0.32534564" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" visible="true" weight="0.19447005" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" weight="0.21935484" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50080776" side_tool="true" weight="0.3080292" />
       <window_info anchor="bottom" id="Version Control" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="CMake" order="12" weight="0.3299539" />
@@ -393,7 +419,8 @@
     <MESSAGE value="GBN RECV implemented. Still need to test server state reset at pack num 1024" />
     <MESSAGE value="About to test gbn_recv_dataack" />
     <MESSAGE value="Finished implementing gbn_reck_dataack, about to test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished implementing gbn_reck_dataack, about to test" />
+    <MESSAGE value="Finished implementing close" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished implementing close" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -410,18 +437,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>351</line>
-          <option name="timeStamp" value="78" />
+          <line>287</line>
+          <option name="timeStamp" value="95" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>354</line>
-          <option name="timeStamp" value="79" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/gbn.c</url>
-          <line>450</line>
-          <option name="timeStamp" value="89" />
+          <line>382</line>
+          <option name="timeStamp" value="103" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -460,15 +482,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/receiver.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="618">
-          <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
+        <state relative-caret-position="379">
+          <caret line="59" selection-start-line="59" selection-end-line="59" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gbn.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="14" lean-forward="true" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+        <state relative-caret-position="216">
+          <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
           <folding>
             <element signature="e#31#52#0" expanded="true" />
           </folding>
@@ -477,8 +499,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gbn.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="448" column="52" lean-forward="true" selection-start-line="448" selection-start-column="52" selection-end-line="448" selection-end-column="52" />
+        <state relative-caret-position="403">
+          <caret line="254" column="55" lean-forward="true" selection-start-line="254" selection-start-column="55" selection-end-line="254" selection-end-column="55" />
           <folding>
             <element signature="e#63#175#0" />
             <element signature="e#176#363#0" />
@@ -486,10 +508,11 @@
             <element signature="e#485#2489#0" />
             <element signature="e#2491#4956#0" />
             <element signature="e#4974#5884#0" />
+            <element signature="e#6318#7567#0" />
             <element signature="e#5529#5933#0" />
-            <element signature="e#5935#7488#0" />
-            <element signature="e#16368#21036#0" />
-            <element signature="e#21040#21831#0" />
+            <element signature="e#9765#15009#0" />
+            <element signature="e#14858#15787#0" />
+            <element signature="e#16029#17482#1" />
             <element signature="e#22460#23193#0" />
             <element signature="e#23195#24161#0" />
             <element signature="e#16021#16105#1" />

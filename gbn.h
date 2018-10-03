@@ -26,7 +26,7 @@ extern int errno;
 #define CORR_PROB 1e-3    /* corruption probability                      */
 #define DATALEN   1024    /* length of the payload                       */
 #define N         1024    /* Max number of packets a single call to gbn_send can process */
-#define TIMEOUT      1    /* timeout to resend packets (1 second)        */
+#define TIMEOUT      10    /* timeout to resend packets (2 second)        */
 #define MAX_NUM_TIMEOUTS 5  /* Max # of timeouts before sender closes connection   */
 
 /*----- Packet/State types -----*/
@@ -46,7 +46,7 @@ extern int errno;
 /*----- Window Speed Modes ----- */
 #define WINDOW_SLOWMODE 1
 #define WINDOW_MODMODE 2
-#define WINDOW_FASTMODE 3
+#define WINDOW_FASTMODE 4
 
 /*----- Booleans -----*/
 #define TRUE  1
