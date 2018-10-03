@@ -27,6 +27,7 @@ extern int errno;
 #define DATALEN   1024    /* length of the payload                       */
 #define N         1024    /* Max number of packets a single call to gbn_send can process */
 #define TIMEOUT      1    /* timeout to resend packets (1 second)        */
+#define MAX_NUM_TIMEOUTS 5  /* Max # of timeouts before sender closes connection   */
 
 /*----- Packet/State types -----*/
 #define SYN      0        /* Opens a connection                          */
@@ -58,7 +59,7 @@ extern int errno;
 /*----- Go-Back-n packet format -----*/
 typedef struct {
 	uint8_t type;            /* packet type (e.g. SYN, DATA, ACK, FIN)       */
-	uint16_t seqnum;         /* sequence number of the packet. Updated to 16 */
+	// uint16_t seqnum;         /* sequence number of the packet. Updated to 16 */
 	uint16_t data_length_in_bytes;
 	uint16_t packet_num;
     uint16_t checksum;        /* header and payload checksum                  */
@@ -68,15 +69,20 @@ typedef struct {
 typedef struct state_t{
 
     uint8_t state;
-
     uint8_t role;
+
     struct sockaddr_storage client;
     struct sockaddr *client_ptr;
     struct sockaddr_storage server;
     struct sockaddr *server_ptr;
     socklen_t dest_socklen;
 
-    uint16_t packet_num;        /* First packet is packet #1 (not #0)          */
+
+    uint16_t next_expected_pack_num;  /* Server/Receiver: packet number after the highest in sequence packet  */
+    uint16_t window_start;            /* Client/Sender: the highest packet number that server has not yet DATAACKED */
+
+    uint8_t recv_ack_timeout_count;
+
     uint8_t window_size;
     gbnhdr packet_buf[N+1];     /* Packet #1 is stored at index 1              */
 
@@ -115,8 +121,9 @@ void gbn_init();
 void gbnhdr_clear_packet(gbnhdr *packet);
 uint8_t gbnhdr_packet_builder(gbnhdr *packet, uint8_t type, uint16_t packet_num, uint16_t payload_length, const void *buf);
 uint8_t gbnhdr_validate_checksum(gbnhdr *packet);
-ssize_t gbn_send_packet(int sockfd, const void *buf, size_t len, int flags,
-        const struct sockaddr *server, socklen_t socklen);
+ssize_t gbn_send_data_packet(int sockfd, uint16_t packet_num, int flags);
+ssize_t gbn_recv_dataack(int sockfd, gbnhdr *packet, int flags);
+ssize_t gbn_send_dataack(int sockfd, uint16_t packet_num, int flags);
 
 void signal_handler();
 
