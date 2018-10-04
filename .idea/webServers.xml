@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="184e2755-f59c-4c1a-9921-b7415376074a" name="aws" url="http://ec2-52-15-188-236.us-east-2.compute.amazonaws.com">
+        <fileTransfer host="ec2-52-15-188-236.us-east-2.compute.amazonaws.com" port="22" privateKey="$USER_HOME$/Desktop/ndshw1.pem" rootFolder="/home/ec2-user" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

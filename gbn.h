@@ -20,6 +20,7 @@
 /*----- Error variables -----*/
 extern int h_errno;
 extern int errno;
+#define h_addr h_addr_list[0]
 
 /*----- Protocol parameters -----*/
 #define LOSS_PROB 1e-2    /* loss probability                            */
@@ -58,7 +59,6 @@ extern int errno;
 /*----- Go-Back-n packet format -----*/
 typedef struct {
 	uint8_t type;            /* packet type (e.g. SYN, DATA, ACK, FIN)       */
-	// uint16_t seqnum;         /* sequence number of the packet. Updated to 16 */
 	uint16_t data_length_in_bytes;
 	uint16_t packet_num;
     uint16_t checksum;        /* header and payload checksum                  */
@@ -83,7 +83,7 @@ typedef struct state_t{
     uint8_t recv_ack_timeout_count;
 
     uint8_t window_size;
-    gbnhdr packet_buf[N+1];     /* Packet #1 is stored at index 1              */
+    gbnhdr packet_buf[N+1];     /* Packet #1 is stored at index 1  */
 
 } state_t;
 
