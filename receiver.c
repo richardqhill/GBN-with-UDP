@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     FILE *outputFile;
     socklen_t socklen;
 
+
     /*----- Checking arguments -----*/
     if (argc != 3){
         fprintf(stderr, "usage: receiver <port> <filename>\n");

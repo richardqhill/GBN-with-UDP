@@ -9,6 +9,7 @@ int main(int argc, char *argv[]){
 	FILE *inputFile;     /* input file pointer                              */
 	struct sockaddr_in server;
 
+
 	socklen = sizeof(struct sockaddr);
 
 	/*----- Checking arguments -----*/
