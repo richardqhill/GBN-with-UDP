@@ -1,5 +1,4 @@
 /Users/richardhill/CLionProjects/NDSHW1/cmake-build-debug/CMakeFiles/SenderClient.dir
 /Users/richardhill/CLionProjects/NDSHW1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
 /Users/richardhill/CLionProjects/NDSHW1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/richardhill/CLionProjects/NDSHW1/cmake-build-debug/CMakeFiles/Main.dir
 /Users/richardhill/CLionProjects/NDSHW1/cmake-build-debug/CMakeFiles/ReceiverServer.dir

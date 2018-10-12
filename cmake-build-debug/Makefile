@@ -124,19 +124,6 @@ SenderClient/fast:
 .PHONY : SenderClient/fast
 
 #=============================================================================
-# Target rules for targets named Main
-
-# Build rule for target.
-Main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Main
-.PHONY : Main
-
-# fast build rule for target.
-Main/fast:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
-.PHONY : Main/fast
-
-#=============================================================================
 # Target rules for targets named ReceiverServer
 
 # Build rule for target.
@@ -156,7 +143,6 @@ gbn.o: gbn.c.o
 # target to build an object file
 gbn.c.o:
 	$(MAKE) -f CMakeFiles/SenderClient.dir/build.make CMakeFiles/SenderClient.dir/gbn.c.o
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/gbn.c.o
 	$(MAKE) -f CMakeFiles/ReceiverServer.dir/build.make CMakeFiles/ReceiverServer.dir/gbn.c.o
 .PHONY : gbn.c.o
 
@@ -167,7 +153,6 @@ gbn.i: gbn.c.i
 # target to preprocess a source file
 gbn.c.i:
 	$(MAKE) -f CMakeFiles/SenderClient.dir/build.make CMakeFiles/SenderClient.dir/gbn.c.i
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/gbn.c.i
 	$(MAKE) -f CMakeFiles/ReceiverServer.dir/build.make CMakeFiles/ReceiverServer.dir/gbn.c.i
 .PHONY : gbn.c.i
 
@@ -178,36 +163,8 @@ gbn.s: gbn.c.s
 # target to generate assembly for a file
 gbn.c.s:
 	$(MAKE) -f CMakeFiles/SenderClient.dir/build.make CMakeFiles/SenderClient.dir/gbn.c.s
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/gbn.c.s
 	$(MAKE) -f CMakeFiles/ReceiverServer.dir/build.make CMakeFiles/ReceiverServer.dir/gbn.c.s
 .PHONY : gbn.c.s
-
-main.o: main.c.o
-
-.PHONY : main.o
-
-# target to build an object file
-main.c.o:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/main.c.o
-.PHONY : main.c.o
-
-main.i: main.c.i
-
-.PHONY : main.i
-
-# target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/main.c.i
-.PHONY : main.c.i
-
-main.s: main.c.s
-
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/main.c.s
-.PHONY : main.c.s
 
 receiver.o: receiver.c.o
 
@@ -272,14 +229,10 @@ help:
 	@echo "... SenderClient"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Main"
 	@echo "... ReceiverServer"
 	@echo "... gbn.o"
 	@echo "... gbn.i"
 	@echo "... gbn.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
 	@echo "... receiver.o"
 	@echo "... receiver.i"
 	@echo "... receiver.s"
