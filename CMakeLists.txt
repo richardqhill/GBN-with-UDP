@@ -8,9 +8,7 @@ set(SOURCE_FILES
         sender.c
         gbn.c
         gbn.h
-        main.c
         )
 
 add_executable(ReceiverServer receiver.c gbn.c)
 add_executable(SenderClient sender.c gbn.c)
-add_executable(Main main.c gbn.c)
